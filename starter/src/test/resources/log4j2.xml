@@ -11,8 +11,8 @@
         </Console>
 
         <RollingFile name="File"
-                     fileName="target/logs/test.log"
-                     filePattern="target/logs/test-%d{yyyy-MM-dd}-%i.log">
+                     fileName="target/logs/ConfigCheck.log"
+                     filePattern="target/logs/ConfigCheck-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout pattern="${pattern}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="5 MB"/>
