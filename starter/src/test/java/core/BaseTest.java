@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.annotations.*;
+import pages.LoginPage;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,9 +78,9 @@ public class BaseTest {
         return DriverFactory.get();
     }
 
-//    protected LoginPage openLoginPage() {
-//        return new LoginPage(driver()).open();
-//    }
+    protected LoginPage openLoginPage() {
+        return new LoginPage(driver()).open();
+    }
 
     private void clearOldScreenshots() {
         if (!Files.isDirectory(SCREENSHOTS)) {
