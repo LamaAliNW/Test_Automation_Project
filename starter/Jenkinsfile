@@ -37,10 +37,17 @@ script {
         }
     }
 
-    post {
-        always {
-            junit allowEmptyResults: true,
-                  testResults: 'starter/target/surefire-reports/TEST-*.xml'
-        }
+
+post {
+    always {
+        junit allowEmptyResults: true,
+              testResults: 'starter/target/surefire-reports/TEST-*.xml'
+
+        allure(
+            includeProperties: false,
+            jdk: '',
+            results: [[path: 'starter/target/allure-results']]
+        )
     }
 }
+
