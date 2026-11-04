@@ -1,0 +1,46 @@
+
+pipeline {
+    agent any
+
+    tools {
+        jdk 'JDK21'
+        maven 'Maven3'
+    }
+
+    parameters {
+        choice(
+            name: 'SUITE',
+            choices: ['smoke', 'regression'],
+            description: 'Select the TestNG suite'
+        )
+    }
+
+    stages {
+        stage('Check Tools') {
+            steps {
+                bat 'java -version'
+                bat 'mvn -version'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir('starter') {
+script {
+    def suiteFile = params.SUITE == 'smoke'
+        ? 'testng-smoke.xml'
+        : 'testng.xml'
+
+    bat "mvn test \"-DsuiteXmlFile=${suiteFile}\" \"-Dheadless=true\""
+}                }
+            }
+        }
+    }
+
+    post {
+        always {
+            junit allowEmptyResults: true,
+                  testResults: 'starter/target/surefire-reports/TEST-*.xml'
+        }
+    }
+}
