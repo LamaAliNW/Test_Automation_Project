@@ -1,16 +1,13 @@
+
 package pages;
 
 import config.Config;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class LoginPage {
-
+public class LoginPage extends BasePage {
 
     private static final By USERNAME = By.id("user-name");
     private static final By PASSWORD = By.id("password");
@@ -18,12 +15,8 @@ public class LoginPage {
     private static final By ERROR = By.cssSelector("h3[data-test='error']");
     private static final By LOGO = By.className("login_logo");
 
-    private final WebDriver driver;
-    private final WebDriverWait wait;
-
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Config.timeout());
+        super(driver);
     }
 
     @Step("Open the login page")
@@ -48,19 +41,12 @@ public class LoginPage {
     private void submit(String user, String password) {
         type(USERNAME, user);
         type(PASSWORD, password);
-        wait.until(ExpectedConditions.elementToBeClickable(LOGIN_BUTTON)).click();
-    }
-
-    private void type(By locator, String text) {
-
-        WebElement field = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-        field.clear();
-        field.sendKeys(text);
+        click(LOGIN_BUTTON);
     }
 
     @Step("Read the error message")
     public String errorMessage() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(ERROR)).getText().trim();
+        return getText(ERROR).trim();
     }
 
     public boolean isLoaded() {
@@ -77,13 +63,5 @@ public class LoginPage {
 
     public boolean isLoginButtonVisible() {
         return isVisible(LOGIN_BUTTON);
-    }
-
-    private boolean isVisible(By locator) {
-        try {
-            return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).isDisplayed();
-        } catch (TimeoutException e) {
-            return false;
-        }
     }
 }
