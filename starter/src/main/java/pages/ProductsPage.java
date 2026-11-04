@@ -163,6 +163,11 @@ public class ProductsPage extends BasePage {
         if (!isProductAdded(productName)) {
             click(buttonForProduct(productName));
         }
+
+        // Wait until the button changes to Remove
+        wait.until(driver ->
+                isProductAdded(productName)
+        );
     }
 
 
@@ -209,6 +214,11 @@ public class ProductsPage extends BasePage {
     public CartPage openCart() {
 
         click(CART_LINK);
+
+        // Wait until navigation to the cart is complete
+        wait.until(
+                ExpectedConditions.urlContains("cart.html")
+        );
 
         return new CartPage(driver);
     }
