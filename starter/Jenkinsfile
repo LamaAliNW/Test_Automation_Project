@@ -10,29 +10,40 @@ pipeline {
     parameters {
         choice(
             name: 'SUITE',
-            choices: ['smoke', 'regression'],
+            choices: [
+                'testng-smoke.xml',
+                'testng.xml',
+                'testng-parallel.xml'
+            ],
             description: 'Select the TestNG suite'
+        )
+
+        booleanParam(
+            name: 'HEADLESS',
+            defaultValue: true,
+            description: 'Run Chrome without opening a browser window'
         )
     }
 
     stages {
-        stage('Check Tools') {
+        stage('Checkout') {
             steps {
-                bat 'java -version'
-                bat 'mvn -version'
+                checkout scm
             }
         }
 
-        stage('Run Tests') {
+        stage('Build') {
             steps {
                 dir('starter') {
-                    script {
-                        def suiteFile = params.SUITE == 'smoke'
-                            ? 'testng-smoke.xml'
-                            : 'testng.xml'
+                    bat 'mvn clean compile test-compile -DskipTests'
+                }
+            }
+        }
 
-                        bat "mvn test \"-DsuiteXmlFile=${suiteFile}\" \"-Dheadless=true\""
-                    }
+        stage('Test') {
+            steps {
+                dir('starter') {
+                    bat "mvn test \"-DsuiteXmlFile=${params.SUITE}\" \"-Dheadless=${params.HEADLESS}\""
                 }
             }
         }
@@ -47,6 +58,11 @@ pipeline {
                 includeProperties: false,
                 jdk: '',
                 results: [[path: 'starter/target/allure-results']]
+            )
+
+            archiveArtifacts(
+                artifacts: 'starter/target/screenshots/**/*',
+                allowEmptyArchive: true
             )
         }
     }
