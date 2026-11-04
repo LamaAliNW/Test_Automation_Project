@@ -26,28 +26,28 @@ pipeline {
         stage('Run Tests') {
             steps {
                 dir('starter') {
-script {
-    def suiteFile = params.SUITE == 'smoke'
-        ? 'testng-smoke.xml'
-        : 'testng.xml'
+                    script {
+                        def suiteFile = params.SUITE == 'smoke'
+                            ? 'testng-smoke.xml'
+                            : 'testng.xml'
 
-    bat "mvn test \"-DsuiteXmlFile=${suiteFile}\" \"-Dheadless=true\""
-}                }
+                        bat "mvn test \"-DsuiteXmlFile=${suiteFile}\" \"-Dheadless=true\""
+                    }
+                }
             }
         }
     }
 
+    post {
+        always {
+            junit allowEmptyResults: true,
+                  testResults: 'starter/target/surefire-reports/TEST-*.xml'
 
-post {
-    always {
-        junit allowEmptyResults: true,
-              testResults: 'starter/target/surefire-reports/TEST-*.xml'
-
-        allure(
-            includeProperties: false,
-            jdk: '',
-            results: [[path: 'starter/target/allure-results']]
-        )
+            allure(
+                includeProperties: false,
+                jdk: '',
+                results: [[path: 'starter/target/allure-results']]
+            )
+        }
     }
 }
-
